@@ -1,0 +1,19 @@
+# Enable mod_rewrite
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Allow direct access to existing files and directories
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Skip /admin and /user but allow everything else to index.php
+    RewriteCond %{REQUEST_URI} !^/(admin|user)/
+    RewriteRule ^(.*)$ /index.php [L,QSA]
+
+</IfModule>
+
+# Allow access to PHP, CSS, JS, and media files
+<FilesMatch "\.(php|html|css|js|jpg|png|gif|ico|svg|woff|ttf|pdf)$">
+    Require all granted
+</FilesMatch>

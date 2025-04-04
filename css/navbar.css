@@ -1,0 +1,699 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+}
+
+.navbar {
+  background-color: rgb(117, 235, 123);
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  max-height: 150px;
+}
+
+.navbar-title img {
+  height: 100px;
+}
+
+.navbar-title h2 {
+  font-size: 12px;
+}
+
+.title {
+  font-size: 12px;
+  padding: 20px;
+}
+
+.title h1 {
+  font-size: 20px;
+}
+
+.navbar-title {
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: end;
+}
+.navbar-menu ul {
+  display: flex;
+}
+
+.navbar-menu ul li {
+  list-style-type: none;
+}
+
+.navbar-menu ul li i {
+  margin-left: 20px;
+  text-decoration: none;
+}
+
+.navbar-menu a {
+  color: black;
+  text-decoration: none;
+}
+
+.navbar-menu ul li.active {
+  color: white;
+}
+
+.navbar-menu ul li a:hover {
+  color: white;
+}
+
+.navbar-menu .active a {
+  color: white;
+}
+.container {
+  padding: 20px;
+}
+.request_table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.request_table th,
+.request_table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.request_table th {
+  background-color: #f2f2f2;
+  text-align: left;
+}
+
+.accept-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+table,
+th,
+td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+}
+
+.container {
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#searchInput {
+  width: 20%;
+  padding: 5px 10px;
+  margin-bottom: 1%;
+  box-sizing: border-box;
+}
+
+.search {
+  margin: 10px;
+  margin-bottom: 40px;
+  height: 30px;
+}
+
+/* CSS for edit and delete buttons */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.action-buttons a {
+  color: #555;
+  text-decoration: none;
+  padding: 4px;
+}
+
+.action-buttons a:hover {
+  color: #333;
+}
+
+.action-buttons .fa-edit {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 6px 6px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 2px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.action-buttons .fa-trash {
+  background-color: #f44336;
+  border: none;
+  color: white;
+  padding: 6px 6px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 2px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left:0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  background-color: #fefefe;
+  margin: 2% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80vw;
+  height: 85vh;
+  max-width: 800px;
+  border-radius: 8px;
+}
+
+.underline {
+  width: 100%;
+  margin-top: 20px;
+  border-bottom: 2px solid black; 
+  padding-bottom: 5px; 
+  margin-bottom: 20px;
+}
+.contents {
+  padding: 30px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+.modal-content img {
+  height: 100px;
+}
+
+.punongbrgy {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+
+
+/* Header */
+.head {
+  text-align: center;
+  margin-bottom: 20px;
+  
+}
+
+
+/* Content */
+.contentbrgy {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.contentbrgy h1 {
+  margin: 0;
+  font-size: 18px;
+}
+
+/* Body */
+.modal-content h2 {
+  font-weight: 500;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.modal-content p {
+  margin-bottom:0px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Footer */
+.modal-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Style the last paragraph */
+.modal-content p:last-child {
+  margin-bottom: 0; /* Remove bottom margin for the last paragraph */
+}
+
+/* Style the span elements inside paragraphs */
+.modal-content p span {
+  font-weight: bold;
+}
+
+/* ID-specific styling */
+#details2 {
+  font-style: italic;
+}
+
+#pMonth,
+#pDay,
+#pYear,
+#pAddress,
+#pCaptain,
+#pDateIssued {
+  font-weight: bold;
+}
+
+.punongbrgy {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.punongbrgy p:last-child {
+  border-top: 1px solid black;
+}
+
+/* CSS for the print button */
+.modal-content button {
+  padding: 5px 8px; /* Adjust padding as needed */
+  background-color: #4caf50; /* Green background color */
+  color: white; /* White text color */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Add cursor pointer on hover */
+  margin-top: 2%;
+  margin-left: 40%;
+  width: 20%;
+}
+
+
+@media print {
+  
+  .modal-content button {
+    display: none;
+  }
+  .close {
+    display: none;
+  }
+
+  .modal {
+    
+    margin-top: 20px;
+  }
+  .modal-content {
+    border: none;
+    width: 100%;
+    margin: 0;
+    height: 100%;
+  }
+}
+
+.modal-content button:hover {
+  background-color: #45a049; /* Darker green color on hover */
+}
+
+.table-payment {
+  width: 100%;
+  max-height: 380px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+}
+
+#paymentTable {
+  width: 100%; /* Ensure the table takes the full width */
+  border-collapse: collapse; /* Collapse table borders */
+}
+
+#paymentTable th,
+#paymentTable td {
+  border: 1px solid #ddd; /* Add border to table cells */
+  padding: 8px; /* Add padding to table cells */
+  text-align: left; /* Align text to the left */
+}
+
+#paymentTable th {
+  background-color: #f2f2f2; /* Add background color to table header */
+}
+table td:first-child {
+  color: red;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 1%;
+  font-size: 14px;
+  margin-left: 1%;
+}
+#paymentTable thead {
+  position: sticky;
+  top: 0;
+  background-color: #f2f2f2;
+}
+th,
+td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+th {
+  background-color: #f2f2f2;
+}
+tr:hover {
+  background-color: #ddd;
+}
+
+/* Popup Form */
+.popup {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+}
+
+.popupform-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 15px;
+  width: 80%;
+  max-width: 1000px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: left;
+}
+
+/* Close button */
+.close {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  cursor: pointer;
+  color: #aaa;
+  font-size: 20px;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Form title */
+.popup h3 {
+  margin-top: 0;
+}
+
+/* Form fields */
+.popup input[type="text"],
+.popup input[type="number"] {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0 15px 0;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Submit button */
+.popup input[type="submit"] {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.popup input[type="submit"]:hover {
+  background-color: #45a049;
+}
+
+/* Error message */
+.popup .error {
+  color: red;
+  font-size: 14px;
+}
+
+/* payment.css */
+
+/* Container styles */
+.container {
+  display: flex;
+}
+
+.table-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  /* To position the filter and dashboard relative to this container */
+}
+
+/* Filter container styles */
+.filter-container {
+  margin: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.filter-container label {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.dashboard-container {
+  display: flex;
+
+  flex-direction: row;
+  justify-content: right;
+}
+
+.date {
+  margin: 3px;
+  display: flex;
+}
+
+.dashboard-container input {
+  height: 20px;
+}
+
+.dashboard-box {
+  margin: 3px;
+  display: flex;
+  flex-direction: column;
+  background-color: #2c2c2c;
+  padding: 20px;
+  right: 0;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 20%;
+  color: white;
+}
+
+/* Add New button styles */
+button {
+  background-color: #4caf50;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  transition: transform 0.1s ease;
+}
+
+button:hover {
+  background-color: #45a049;
+  transform: scale(1.1);
+}
+
+.payment_container {
+  border: 1px solid #ccc;
+  max-height: 100%; /* Set the maximum height for the container */
+  overflow: auto; /* Enable vertical scrolling */
+}
+.delete-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  border: none;
+}
+table td:first-child {
+  color: red;
+}
+table td:nth-child(4) {
+  color: blue;
+}
+
+
+.form-control {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0 15px 0;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px; /* Space between buttons */
+}
+
+.d-none{
+  display: none;
+}
+.popup-view {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.popup-content-view {
+  background-color: #fefefe;
+  margin: 10% auto;
+  border: 1px solid #888;
+  width: 70%;
+}
+
+.close-button {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+select, textarea {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  width: 100%; /* Make the fill-up expand fully */
+}
+
+.btn-primary {
+  width: 50%; 
+  padding: 5px;
+  border: none;
+  margin-left: 10px;
+  border-radius: 5px; 
+  background-color: #2f8db3;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.btn-primary:hover {
+  background-color: #2f8db3; 
+  transform: scale(1.1); 
+
+}
+.dashboard-container-form {
+  display: flex;
+  justify-content: flex-end; /* Align to the right */
+  align-items: center; /* Keep elements vertically centered */
+  gap: 10px; /* Space between elements */
+  flex-wrap: wrap; /* Prevent overflowing */
+}
+
+.dashboard-container-form select {
+  width: 120px; /* Adjust the width as needed */
+  padding: 5px;
+}
+
+.dashboard-container-form button {
+  padding: 8px 15px;
+  font-size: 14px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px; /* Add spacing between elements */
+  align-items: center;
+}
