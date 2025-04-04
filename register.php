@@ -1,3 +1,12 @@
+<?php 
+require_once 'connection/connect.php';
+$query1 = "SELECT * FROM purok ORDER BY `name`";
+$result1 = $conn->query($query1);
+$purok = array();
+while($row = $result1->fetch_assoc()){
+    $purok[] = $row; 
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -95,20 +104,12 @@
                         </select>
 
 
-                        <label for="address">Address:</label>
+                        <label for="address">Purok:</label>
                         <select id="address" name="address" required>
-                            <option value="" disabled selected>--Select Address--</option>
-                            <option value="Purok 1">Purok 1</option>
-                            <option value="Purok 2">Purok 2</option>
-                            <option value="Purok 3">Purok 3</option>
-                            <option value="Purok 4">Purok 4</option>
-                            <option value="Purok 5">Purok 5</option>
-                            <option value="Purok 6">Purok 6</option>
-                            <option value="Purok 7">Purok 7</option>
-                            <option value="St Joseph 7 Village">St. Joseph 7 Village</option>
-                            <option value="Celestine Homes">Celestine Homes</option>
-                            <option value="Maripaz">Maripaz</option>
-                            <option value="Lynville">Lynville</option>
+                            <option value="" disabled selected>--Select Purok--</option>
+                            <?php foreach($purok as $row):?>
+                                <option value="<?= ucwords($row['name']) ?>"><?= $row['name'] ?></option>
+                            <?php endforeach ?>
                         </select>
 
                     </div>
