@@ -253,7 +253,7 @@ function openEditPopupFormEdit(row) {
     // Use a more specific query to ensure the elements are found correctly
     const form = document.querySelector("#edit_resident");
     if (form) {
-        console.log(row);
+
         form.querySelector("#editAccountID").value = row.accountID;
         form.querySelector("#national_id").value = row.national_id;
         form.querySelector("#lastName").value = row.lastName;

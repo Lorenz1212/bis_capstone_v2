@@ -2,16 +2,16 @@
 session_start();
 error_reporting(0);
 // ini_set('display_errors', 1);
-// $host = "localhost";
-// $username = "root";
-// $password = "";
-// $database = "brgy_info";
-
-
 $host = "localhost";
-$username = "u856582098_bis_v2"; 
-$password = "2R=[mzmO8t&";
-$database = "u856582098_bis_v2";
+$username = "root";
+$password = "";
+$database = "brgy_info";
+
+
+// $host = "localhost";
+// $username = "u856582098_bis_v2"; 
+// $password = "2R=[mzmO8t&";
+// $database = "u856582098_bis_v2";
 
 
 

@@ -21,7 +21,7 @@ require 'login.php';
             </div>
             <div>
             <h3 class="text-center">
-                DIGITAL MANAGEMENT INFORMATION SYSTEM OF BARANGAY MARINIG CABUYAO LAGUNA
+                DIGITAL MANAGEMENT INFORMATION SYSTEM OF BARANGAY MAMATID CABUYAO LAGUNA
             </h3>
             </div>
            

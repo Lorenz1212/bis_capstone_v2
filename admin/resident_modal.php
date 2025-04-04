@@ -205,7 +205,7 @@ while($row = $result1->fetch_assoc()){
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="birthdate">Birth Date:</label>
-                            <input type="date" class="form-control" id="birthdate" name="birthdate" onchange="updateAgeEdit('#edit_resident')" required>
+                            <input type="date" class="form-control " id="birthdate" name="birthdate" onchange="updateAgeEdit()" required>
                         </div>
                         <div class="col-md-6">
                             <label for="age">Age:</label>
@@ -370,11 +370,11 @@ while($row = $result1->fetch_assoc()){
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="birthdate" class="form-label">Birth Date</label>
-                            <input type="date" id="birthdate" name="birthdate" class="form-control" required onchange="updateAge('#add_new_resident')">
+                            <input type="date" id="Addbirthdate" name="birthdate" class="form-control" required onchange="updateAge()">
                         </div>
                         <div class="col-md-6">
                             <label for="age" class="form-label">Age</label>
-                            <input type="text" id="age" name="age" class="form-control" readonly>
+                            <input type="text" id="Addage" name="age" class="form-control" readonly>
                         </div>
                     </div>
 
@@ -547,3 +547,82 @@ while($row = $result1->fetch_assoc()){
 </div>
 
 
+<script>
+    // Set default date when page loads
+function setDefaultDate() {
+    let today = new Date();
+    let birthYear = today.getFullYear() - 16;
+    let month = String(today.getMonth() + 1).padStart(2, '0'); 
+    let day = String(today.getDate()).padStart(2, '0'); 
+    let defaultDate = `${birthYear}-${month}-${day}`;
+
+    document.getElementById("Addbirthdate").value = defaultDate;
+    document.getElementById("birthdate").value = defaultDate;
+    // Calculate age for the default date
+    updateAge();
+}
+
+// Calculate age from birthdate
+function calculateAge(birthdate) {
+    if (!birthdate) return "";
+    
+    const today = new Date();
+    const birthDate = new Date(birthdate);
+    
+    // Check if birthdate is in the future
+    if (birthDate > today) {
+        alert("Birth date cannot be in the future.");
+        document.getElementById('birthdate').value = "";
+        document.getElementById('Addbirthdate').value = "";
+        return "";
+    }
+    
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    
+    if (age < 16) {
+        alert("Age must be 16 or above.");
+        document.getElementById('birthdate').value = "";
+        document.getElementById('Addbirthdate').value = "";
+        return "";
+    }
+    
+    return age;
+}
+
+// Update age field based on birthdate
+function updateAge() {
+    const birthdateInput = document.getElementById('Addbirthdate').value;
+    const ageInput = document.getElementById('Addage');
+    if (birthdateInput) {
+        const age = calculateAge(birthdateInput);
+        ageInput.value = age !== "" ? age : "";
+    } else {
+        ageInput.value = "";
+    }
+}
+function updateAgeEdit() {
+    const birthdateInput = document.getElementById('birthdate').value;
+    const ageInput = document.getElementById('age');
+    if (birthdateInput) {
+        const age = calculateAge(birthdateInput);
+        ageInput.value = age !== "" ? age : "";
+    } else {
+        ageInput.value = "";
+    }
+}
+setDefaultDate();
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    setDefaultDate();
+    
+    // Add event listener for birthdate changes
+    document.getElementById('Addbirthdate').addEventListener('change', updateAge);
+    document.getElementById('birthdate').addEventListener('change', updateAgeEdit);
+});
+
+</script>

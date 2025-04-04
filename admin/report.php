@@ -5,27 +5,64 @@ include 'user_navbar.php';
 $category = $_GET['category'] ?? '';
 $month = $_GET['month'] ?? '';
 $year = $_GET['year'] ?? date('Y');
+$type = $_GET['type'] ?? '';
 
-// Build WHERE clause
-$whereClause = "WHERE status IN (0,2)";
+// Build WHERE clause for main query
+$whereClause = "WHERE A.status IN (0,2)";
 $params = [];
 $types = "";
 
 if (!empty($category)) {
     if ($category == 1 && !empty($month)) {
+        $whereClause .= ($type) ? " AND A.Type = ?" : "";
         $whereClause .= " AND MONTH(A.created_at) = ? AND YEAR(A.created_at) = ?";
-        $params = [$month, $year];
-        $types = "ii";
+        $params = ($type) ? [$type, $month, $year] : [$month, $year];
+        $types = ($type) ? "sii" : "ii";
     } elseif ($category == 2) {
+        $whereClause .= ($type) ? " AND A.Type = ?" : "";
         $whereClause .= " AND YEAR(A.created_at) = ?";
-        $params = [$year];
-        $types = "i";
+        $params = ($type) ? [$type, $year] : [$year];
+        $types = ($type) ? "si" : "i";
     }
 }
 
-// Get totals using COALESCE to handle NULL values
-$total_new = $conn->query("SELECT COALESCE(SUM(Amount), 0) AS total FROM payment WHERE type_flag = 'NEW' AND status IN (0,2)")->fetch_assoc()['total'];
-$total_renew = $conn->query("SELECT COALESCE(SUM(Amount), 0) AS total FROM payment WHERE type_flag = 'RENEW' AND status IN (0,2)")->fetch_assoc()['total'];
+// Build WHERE clause for totals (same filters as main query)
+$totalsWhereClause = "WHERE status IN (0,2)";
+$totalsParams = [];
+$totalsTypes = "";
+
+if (!empty($category)) {
+    if ($category == 1 && !empty($month)) {
+        $totalsWhereClause .= ($type) ? " AND Type = ?" : "";
+        $totalsWhereClause .= " AND MONTH(created_at) = ? AND YEAR(created_at) = ?";
+        $totalsParams = ($type) ? [$type, $month, $year] : [$month, $year];
+        $totalsTypes = ($type) ? "sii" : "ii";
+    } elseif ($category == 2) {
+        $totalsWhereClause .= ($type) ? " AND Type = ?" : "";
+        $totalsWhereClause .= " AND YEAR(created_at) = ?";
+        $totalsParams = ($type) ? [$type, $year] : [$year];
+        $totalsTypes = ($type) ? "si" : "i";
+    }
+}
+
+// Get filtered totals
+$total_new_sql = "SELECT COALESCE(SUM(Amount), 0) AS total FROM payment $totalsWhereClause AND type_flag = 'NEW'";
+$total_renew_sql = "SELECT COALESCE(SUM(Amount), 0) AS total FROM payment $totalsWhereClause AND type_flag = 'RENEW'";
+
+// Prepare and execute totals queries
+$stmt_new = $conn->prepare($total_new_sql);
+$stmt_renew = $conn->prepare($total_renew_sql);
+
+if (!empty($totalsParams)) {
+    $stmt_new->bind_param($totalsTypes, ...$totalsParams);
+    $stmt_renew->bind_param($totalsTypes, ...$totalsParams);
+}
+
+$stmt_new->execute();
+$total_new = $stmt_new->get_result()->fetch_assoc()['total'];
+
+$stmt_renew->execute();
+$total_renew = $stmt_renew->get_result()->fetch_assoc()['total'];
 
 // Main query
 $sql = "SELECT A.*, 
@@ -101,6 +138,18 @@ $result = $stmt->get_result();
                             <?php endfor ?>
                         </select>
                     </div>
+                    <div class="col-md-3" id="yearContainer">
+                        <label for="type" class="form-label">Type</label>
+                        <select class="form-select" id="type">
+                        <option value="" selected>ALL</option>
+                            <?php $clearances = ["Brgy clearance", "Business Clearance", "Building Clearance", "Barangay Certificate", "Certificate of Indigency", "Cedula"];
+                            foreach ($clearances as $clearance): ?>
+                                <option value="<?= htmlspecialchars($clearance) ?>" <?= ($type == $clearance) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($clearance) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                     <div class="col-md-3 d-flex align-items-end gap-2">
                         <button type="button" class="btn btn-primary" id="searchBtn">
                             <i class="fas fa-search me-1"></i> Search
@@ -173,7 +222,8 @@ $result = $stmt->get_result();
             const category = document.getElementById('category').value;
             const month = document.getElementById('month').value;
             const year = document.getElementById('year').value;
-            window.location.href = `?category=${category}&month=${month}&year=${year}`;
+            const type = document.getElementById('type').value;
+            window.location.href = `?category=${category}&month=${month}&year=${year}&type=${type}`;
         });
     });
 
