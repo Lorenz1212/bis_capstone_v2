@@ -6,7 +6,7 @@
         </div>
         <div class="title">
             <h1>DIGITAL MANAGEMENT INFORMATION SYSTEM</h1>
-            <h2>BARANGAY MARINIG CABUYAO, LAGUNA</h2>
+            <h2>BARANGAY MAMATID CABUYAO, LAGUNA</h2>
         </div>
     </div>
 
