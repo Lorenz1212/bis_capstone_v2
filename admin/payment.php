@@ -1,7 +1,5 @@
+<?php include 'user_navbar.php'; ?>
 <?php
-// Include database connection
-require '../connection/connect.php';
-
 // Fetch payment data
 $sql = "SELECT A.*, 
     CONCAT(firstName, ' ', IFNULL(CONCAT(UPPER(LEFT(middleName, 1)), '. '), ''), lastName) AS Name 
@@ -28,25 +26,27 @@ $totalAmountCurrentDay = mysqli_fetch_assoc($resultCurrentDay)['totalAmount'] ??
 mysqli_close($conn);
 ?>
 
-<?php include 'user_navbar.php'; ?>
-<div class="container">
-    <div class="dashboard-container">
-        <div class="date">
+<div class="container mt-4">
+    <!-- Dashboard -->
+    <div class="row mb-3">
+        <div class="col-md-6">
             <label for="dateFilter">Filter by Date:</label>
-            <input type="date" id="dateFilter" onchange="filterByDate()">
+            <input type="date" id="dateFilter" class="form-control" onchange="filterByDate()">
         </div>
-        <div class="dashboard-box">
-            <h3>Total Amount Paid</h3>
-            <p id="totalAmount">₱<?php echo number_format($totalAmountCurrentDay, 2); ?></p>
+        <div class="col-md-6 text-end">
+            <h4 class="fw-bold">Total Amount Paid: <span class="text-success">₱<?php echo number_format($totalAmountCurrentDay, 2); ?></span></h4>
         </div>
     </div>
 
-    <div class="table-container">
-        <div class="filter-container">
-            <button onclick="openPopupForm()">+ Add New</button>
-        </div>
-        <table id="paymentTable">
-            <thead>
+    <!-- Add Payment Button -->
+    <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#paymentModal">+ Add New</button>
+    </div>
+
+    <!-- Payment Table -->
+    <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+        <table class="table table-bordered table-hover" id="paymentTable">
+            <thead class="table-dark">
                 <tr>
                     <th>Ref No.</th>
                     <th>Type</th>
@@ -62,18 +62,12 @@ mysqli_close($conn);
                 <?php if (mysqli_num_rows($result) > 0) :
                     while ($row = mysqli_fetch_assoc($result)) :
                         $refund = ($row['status'] == 1) ? 'Yes' : 'No';
-                        if($row['status'] == 0){
-                            $action = "<div>
-                            <button style='background-color: green; color: white; border: none; padding: 5px 10px; cursor: pointer;' onclick='approveRow(\"{$row['RefNo']}\")'>Complete</button>
-                            <button style='background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;' onclick='deleteRow(\"{$row['RefNo']}\")'>Refund</button>
-                         </div>";
-                        }else{
-                            if($row['status'] == 2){
-                                $action = 'Completed';
-                            }else{
-                                $action = 'Refunded';
-                            }
-                            
+                        if ($row['status'] == 0) {
+                            $action = "
+                                <button class='btn btn-success btn-sm' onclick='approveRow(\"{$row['RefNo']}\")'>Complete</button>
+                                <button class='btn btn-danger btn-sm' onclick='deleteRow(\"{$row['RefNo']}\")'>Refund</button>";
+                        } else {
+                            $action = ($row['status'] == 2) ? '<span class="badge bg-success">Completed</span>' : '<span class="badge bg-danger">Refunded</span>';
                         }
                     ?>
                         <tr>
@@ -88,75 +82,84 @@ mysqli_close($conn);
                         </tr>
                 <?php endwhile;
                 else : ?>
-                    <tr><td colspan="8">No payments found</td></tr>
+                    <tr><td colspan="8" class="text-center">No payments found</td></tr>
                 <?php endif; ?>
             </tbody>
         </table>
     </div>
 </div>
 
-<!-- Popup Form -->
-<div id="popupForm" class="popup">
-    <div class="popupform-container">
-        <div class="popup-content">
-            <span class="close-button" onclick="closePopupForm()">&times;</span>
-            <h3>Add New Payment</h3>
-            <form action="insert_payment.php" method="POST">
-                <p style="color: red;">Ref No.: <?php echo $refNo; ?></p>
-                <input type="hidden" name="refNo" value="<?= $refNo; ?>">
-                
-                <label for="type">Type:</label>
-                <select name="type" id="type" onchange="setAmount()" required>
-                    <option value="" selected disabled>Select Certificate</option>
-                    <?php
-                    $clearances = ["Brgy clearance", "Business Clearance", "Building Clearance", "Barangay Certificate", "Certificate of Indigency", "Cedula"];
-                    foreach ($clearances as $clearance) {
-                        echo "<option value='$clearance'>$clearance</option>";
-                    }
-                    ?>
-                </select>
+<!-- Bootstrap Modal for Add Payment -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentModalLabel">Add New Payment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="insert_payment.php" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Ref No.: <span class="text-danger"><?php echo $refNo; ?></span></label>
+                        <input type="hidden" name="refNo" value="<?= $refNo; ?>">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Type:</label>
+                        <select name="type" id="type" class="form-control" onchange="setAmount()" required>
+                            <option value="" selected disabled>Select Certificate</option>
+                            <?php
+                            $clearances = ["Brgy clearance", "Business Clearance", "Building Clearance", "Barangay Certificate", "Certificate of Indigency", "Cedula"];
+                            foreach ($clearances as $clearance) {
+                                echo "<option value='$clearance'>$clearance</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
 
-                <label for="type_flag">Type Flag:</label>
-                <select name="type_flag" id="type_flag" required>
-                    <option value="" selected disabled>Select Type</option>
-                    <option value="NEW">NEW</option>
-                    <option value="RENEW">RENEW</option>
-                </select>
+                    <div class="mb-3">
+                        <label for="type_flag" class="form-label">Type Flag:</label>
+                        <select name="type_flag" id="type_flag" class="form-control" required>
+                            <option value="" selected disabled>Select Type</option>
+                            <option value="NEW">NEW</option>
+                            <option value="RENEW">RENEW</option>
+                        </select>
+                    </div>
 
-                <label for="resident_id">Name:</label>
-                <select name="resident_id" required>
-                    <?php
-                    require '../connection/connect.php';
-                    $residents = mysqli_query($conn, "SELECT accountID, lastName, firstName FROM resident_list");
-                    while ($row = mysqli_fetch_assoc($residents)) {
-                        echo "<option value='{$row['accountID']}'>{$row['lastName']}, {$row['firstName']}</option>";
-                    }
-                    mysqli_close($conn);
-                    ?>
-                </select>
+                    <div class="mb-3">
+                        <label for="resident_id" class="form-label">Name:</label>
+                        <select name="resident_id" class="form-control" required>
+                            <?php
+                            require '../connection/connect.php';
+                            $residents = mysqli_query($conn, "SELECT accountID, lastName, firstName FROM resident_list");
+                            while ($row = mysqli_fetch_assoc($residents)) {
+                                echo "<option value='{$row['accountID']}'>{$row['lastName']}, {$row['firstName']}</option>";
+                            }
+                            mysqli_close($conn);
+                            ?>
+                        </select>
+                    </div>
 
-                <label for="amount">Amount:</label>
-                <input type="number" id="amount" name="amount" required readonly>
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount:</label>
+                        <input type="number" id="amount" name="amount" class="form-control" required readonly>
+                    </div>
 
-                <label for="purpose">Purpose:</label>
-                <textarea name="Purpose" rows="3" required></textarea>
+                    <div class="mb-3">
+                        <label for="purpose" class="form-label">Purpose:</label>
+                        <textarea name="Purpose" rows="3" class="form-control" required></textarea>
+                    </div>
 
-                <input type="hidden" name="paymentDate" value="<?= date('Y-m-d'); ?>">
-                <input type="submit" value="Submit">
-            </form>
+                    <input type="hidden" name="paymentDate" value="<?= date('Y-m-d'); ?>">
+                    <button type="submit" class="btn btn-primary w-100">Submit</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
-<script>
-    // Open/close popup form
-    function openPopupForm() {
-        document.getElementById("popupForm").style.display = "block";
-    }
-    function closePopupForm() {
-        document.getElementById("popupForm").style.display = "none";
-    }
 
+<script>
     // Filter payments by date
     function filterByDate() {
         let input = document.getElementById("dateFilter").value;

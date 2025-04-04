@@ -19,15 +19,6 @@ function openTab(evt, tabName) {
     evt.currentTarget.className += " active";
 }
 
-// Function to open the popup form for adding a new resident
-function openPopupForm() {
-    document.getElementById("addResidentForm").style.display = "block";
-}
-
-// Function to close the popup form
-function closePopupForm() {
-    document.getElementById("addResidentForm").style.display = "none";
-}
 
 // Function to add a new resident
 function addResident() {

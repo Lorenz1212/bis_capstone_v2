@@ -1,10 +1,6 @@
 
 <div class="container">
     <?php
-    // Include the database connection file
-    include '../connection/connect.php';
-
-    // Query to select all rows from the resident_list table
     $sql = "SELECT * FROM resident_list where registration_status ='DISAPPROVED'";
 
     // Execute the query
@@ -14,7 +10,7 @@
     // Check if there are any rows returned
     if ($result->num_rows > 0) {
         // Output table header
-        echo "<table border='1' id='residentTableRejected'>
+        echo "<table class='table table-bordered' border='1' id='residentTableRejected'>
                 <tr>
                     <th class='left'>Account ID</th>
                      <th class='left'>Valid ID #</th>
@@ -49,7 +45,10 @@
                     <td class='left'>" . $row["gender"] . "</td>
                     <td class='left'>" . $row["civil_status"] . "</td>
                     <td class='center'>  
-                    <a href='delete_resident.php?id=" . $row["accountID"] . "'><i class='fas fa-trash-alt'></i></a> |
+                     <a href='delete_resident.php?id=" . $row["accountID"] . "' 
+                        onclick='return confirm(\"Are you sure you want to delete this resident?\");'>
+                            <i class='fas fa-trash-alt'></i>
+                        </a> | 
                     <a href='#' onclick='viewResidentInfo($data)'><i class='fas fa-eye'></i></a>
                 </td>
                 
@@ -62,6 +61,5 @@
     }
 
     // Close the database connection
-    $conn->close();
     ?>
 </div>

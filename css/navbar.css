@@ -7,11 +7,11 @@
 }
 
 .navbar {
-  background-color: rgb(117, 235, 123);
+  background-color:#F25961 !important;
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  max-height: 150px;
+  max-height: 140px;
 }
 
 .navbar-title img {
@@ -41,6 +41,7 @@
   display: flex;
   align-items: end;
 }
+
 .navbar-menu ul {
   display: flex;
 }

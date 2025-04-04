@@ -1,18 +1,20 @@
 <?php
 include 'user_navbar.php';
 ?>
-    <div class="container">
-        <div class="dashboard-container">
-            <!-- Your dashboard content -->
-        </div>
-
+<div class="container mt-4">
+    <h2 class="mb-3">Blotter</h2>
         <div class="nav-container">
-            <div class="header">
-                <button class="add-new" onclick="openAddNewPopup()">+ Add New</button>
-                <input type="text" class="search-bar" id="myInput" onkeyup="searchTable()" placeholder="Search...">
+            <div class="search">
+                <div class="input-group mb-3">
+                    <input type="text" id="myInput" class="form-control" placeholder="Search..." oninput="searchTable()">
+                    <button class="btn btn-outline-secondary"><i class="fa fa-search"></i></button>
+                </div>
             </div>
-            <div class="table-container">
-                <table id="myTable">
+            <div class="d-flex justify-content-end mb-3">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewModal">+ Add New</button>
+            </div>
+            <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+                 <table class="table table-bordered table-hover" id="myTable">
                     <?php
                     // SQL query to retrieve blotter data
                     $sql = "SELECT * FROM blotter";
@@ -20,7 +22,7 @@ include 'user_navbar.php';
 
                     // Display table if there are results
                     if ($result->num_rows > 0) {
-                        echo "<tr>
+                        echo "<tr class='table-dark'>
                             <th>File No.</th>
                             <th>Barangay</th>
                             <th>Purok</th>
@@ -48,100 +50,257 @@ include 'user_navbar.php';
 
                             // Add "View" and "Edit" buttons to each row
                             echo "<td class='action-icons'>
-                                <a href='javascript:void(0)' onclick='openViewPopup(\"" . $row['File_No'] . "\", \"" . $row['Barangay'] . "\", \"" . $row['Purok'] . "\", \"" . $row['Incident'] . "\", \"" . $row['Place_of_Incident'] . "\", \"" . $row['Date'] . "\", \"" . $row['Time'] . "\", \"" . $row['Complainant'] . "\", \"" . $row['Witness'] . "\", \"" . $row['Narrative'] . "\")'><i class='fas fa-eye'></i></a>
-                                <a href='javascript:void(0)' onclick='openEditPopup(\"" . $row['File_No'] . "\", \"" . $row['Barangay'] . "\", \"" . $row['Purok'] . "\", \"" . $row['Incident'] . "\", \"" . $row['Place_of_Incident'] . "\", \"" . $row['Date'] . "\", \"" . $row['Time'] . "\", \"" . $row['Complainant'] . "\", \"" . $row['Witness'] . "\", \"" . $row['Narrative'] . "\")'><i class='fas fa-edit'></i></a>
+                                <a href='#' onclick='openViewModal(".htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8').")'><i class='fas fa-eye'></i></a>
+                                <a href='javascript:void(0)' onclick='openEditModal(\"" . $row['File_No'] . "\", \"" . $row['Barangay'] . "\", \"" . $row['Purok'] . "\", \"" . $row['Incident'] . "\", \"" . $row['Place_of_Incident'] . "\", \"" . $row['Date'] . "\", \"" . $row['Time'] . "\", \"" . $row['Complainant'] . "\", \"" . $row['Witness'] . "\", \"" . $row['Narrative'] . "\")'><i class='fas fa-edit'></i></a>
                               </td>";
                             echo "</tr>";
                         }
                     } else {
                         echo "<tr><td colspan='12'>No records found</td></tr>";
                     }
-                    $conn->close();
+          
                     ?>
                 </table>
             </div>
 
-            <!-- Popup modal for adding new entry -->
-            <div id="addNewModal" class="popup">
-                <div class="popupform-container">
-                    <div class="popup-content">
-                        <div class="popup-contitle">
-                        <span class="close-button" onclick="closeAddNewPopup('popupForm')">&times;</span>
+        <div class="modal fade" id="addNewModal" tabindex="-1" aria-labelledby="addNewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addNewModalLabel">Add New Entry</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
                         <form id="addNewForm">
-                            <!-- Display field for automatically generated file number -->
-                            <label for="fileNo">File No:</label>
-                            <input type="text" class="form-control"  id="fileNo" name="fileNo" readonly>
-
-                            <!-- Input fields for other columns in the table -->
-                            <input type="text" class="form-control"  id="barangay" name="barangay" placeholder="Barangay">
-                            <input type="text" class="form-control"  id="purok" name="purok" placeholder="Purok">
-                            <input type="text" class="form-control"  id="incident" name="incident" placeholder="Incident">
-                            <input type="text" class="form-control"  id="placeOfIncident" name="placeOfIncident" placeholder="Place of Incident">
-                            <label for="date">Date:</label>
-                            <input type="date" class="form-control"  id="date" name="date" placeholder="Date" readonly>
-                            <input type="time" class="form-control"  id="time" name="time" placeholder="Time">
-
-                            <input type="text" class="form-control"  id="complainant" name="complainant" placeholder="Complainant">
-                            <input type="text" class="form-control"  id="witness" name="witness" placeholder="Witness">
-                            <textarea id="narrative" class="form-control" name="narrative" rows="3" placeholder="Narrative"></textarea>
-
-                            <!-- Submit button to add the new entry -->
-                            <button type="button" class="btn-success" onclick="addNewEntry()">Add Entry</button>
-                        </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Popup modal for viewing entry -->
-            <div id="viewModal" class="modal">
-                <div class="modal-container">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeViewPopup()">&times;</span>
-                        <div class="modal-header">
-                            <img src="../image/logo.png" alt="brgy marinig logo">
-                            <div class="brgy-info">
-                                <p>Republic of the Philippines</p>
-                                <p>Province of Laguna</p>
-                                <p>Municipality of Cabuyao</p>
-                                <h3>Barangay Marinig</h3>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                <?php
+                                // Get current year
+                                $currentYear = date('Y');
+                                
+                                // Get the count of records for this year
+                                $stmt = $conn->prepare("SELECT COUNT(*) as count FROM blotter WHERE YEAR(Date) = ?");
+                                $stmt->bind_param("s", $currentYear);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                $row = $result->fetch_assoc();
+                                $recordCount = $row['count'] + 1; // Add 1 for the new record
+                                
+                                // Format file number (e.g., BLT-2023-001)
+                                $fileNo = "CASE-" . $currentYear . "-" . str_pad($recordCount, 3, '0', STR_PAD_LEFT);
+                                
+                                // Set current date
+                                $currentDate = date('Y-m-d');
+                                ?>
+                                    <label for="fileNo" class="form-label">File No:</label>
+                                    <input type="text" class="form-control" id="fileNo" name="fileNo" value="<?php echo $fileNo; ?>" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="date" class="form-label">Date:</label>
+                                    <input type="date" class="form-control" id="date" name="date" readonly>
+                                </div>
                             </div>
-                            <img src="../image/cablogo.png" alt="cabuyao logo">
-                        </div>
-                        <div id="viewEntryDetails" class="letter-style"></div>
-                        <button onclick="printModal('viewModal')">Print</button>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="barangay" class="form-label">Barangay:</label>
+                                    <input type="text" class="form-control" id="barangay" name="barangay" placeholder="Barangay">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="purok" class="form-label">Purok:</label>
+                                    <input type="text" class="form-control" id="purok" name="purok" placeholder="Purok">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="incident" class="form-label">Incident:</label>
+                                    <input type="text" class="form-control" id="incident" name="incident" placeholder="Incident">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="placeOfIncident" class="form-label">Place of Incident:</label>
+                                    <input type="text" class="form-control" id="placeOfIncident" name="placeOfIncident" placeholder="Place of Incident">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="time" class="form-label">Time:</label>
+                                    <input type="time" class="form-control" id="time" name="time">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="complainant" class="form-label">Complainant:</label>
+                                    <input type="text" class="form-control" id="complainant" name="complainant" placeholder="Complainant">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="witness" class="form-label">Witness:</label>
+                                <input type="text" class="form-control" id="witness" name="witness" placeholder="Witness">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="narrative" class="form-label">Narrative:</label>
+                                <textarea class="form-control" id="narrative" name="narrative" rows="4" placeholder="Narrative"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="file_id">Upload Evidence</label>
+                                <input type="file" class="form-control" name="file"  accept="image/*">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="addNewEntry()">Add Entry</button>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Popup modal for editing entry -->
-            <div id="editModal" class="popup">
-                <div class="popupform-container">
-                        <div class="popup-content">
-                            <div class="popup-contitle">
-                                <span class="close-button" onclick="closeEditPopup()">&times;</span>
-                                <form id="editForm">
-                                    <!-- Display field for file number -->
-                                    <label for="editFileNo">File No:</label>
-                                    <input type="text" class="form-control" id="editFileNo" name="editFileNo" readonly>
-
-                                    <!-- Input fields for other columns in the table -->
-                                    <input type="text" class="form-control" id="editBarangay" name="editBarangay" placeholder="Barangay">
-                                    <input type="text" class="form-control" id="editPurok" name="editPurok" placeholder="Purok">
-                                    <input type="text" class="form-control" id="editIncident" name="editIncident" placeholder="Incident">
-                                    <input type="text" class="form-control" id="editPlaceOfIncident" name="editPlaceOfIncident" placeholder="Place of Incident">
-                                    <label for="editDate">Date:</label>
-                                    <input type="date" class="form-control" id="editDate" name="editDate" placeholder="Date">
-                                    <input type="time" class="form-control" id="editTime" name="editTime" placeholder="Time">
-
-                                    <input type="text" class="form-control" id="editComplainant" name="editComplainant" placeholder="Complainant">
-                                    <input type="text" class="form-control" id="editWitness" name="editWitness" placeholder="Witness">
-                                    <textarea id="editNarrative"  class="form-control"  name="editNarrative" rows="3" placeholder="Narrative"></textarea>
-
-                                    <!-- Submit button to update the entry -->
-                                    <button type="button" class="btn-success" onclick="updateEntry()">Update Entry</button>
-                                </form>
+       <!-- View Blotter Modal -->
+        <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content border-0" id="printThis">
+                    <!-- Header with Official Barangay Seal -->
+                    <div class="modal-header bg-primary text-white">
+                        <div class="text-center w-100">
+                            <img src="../image/logo.png" alt="Barangay Seal" width="80" class="mb-2">
+                            <h4 class="modal-title fw-bold mb-0" id="viewModalLabel">BARANGAY BLOTTER REPORT</h4>
+                            <small class="d-block">Republic of the Philippines • Province of Laguna • Barangay Mamatid, Cabuyao City</small>
                         </div>
+                    </div>
+                    
+                    <!-- Body with Blotter Details -->
+                    <div class="modal-body">
+                        <div class="blotter-details">
+                            <!-- Case Reference -->
+                            <div class="blotter-section border-bottom pb-2 mb-3">
+                                <h6 class="fw-bold text-primary">CASE REFERENCE NO: <span id="viewFileNo" class="text-dark"></span></h6>
+                                <p class="mb-1"><strong>Date Recorded:</strong> <span id="viewDate"></span></p>
+                                <p><strong>Time Recorded:</strong> <span id="viewTime"></span></p>
+                            </div>
+                            
+                            <!-- Incident Details -->
+                            <div class="blotter-section border-bottom pb-3 mb-3">
+                                <h6 class="fw-bold text-primary">INCIDENT DETAILS</h6>
+                                <p class="mb-1"><strong>Type of Incident:</strong> <span id="viewIncident"></span></p>
+                                <p class="mb-1"><strong>Location:</strong> <span id="viewPlaceOfIncident"></span></p>
+                                <p><strong>Barangay/Purok:</strong> <span id="viewBarangay"></span>, Purok <span id="viewPurok"></span></p>
+                            </div>
+                            
+                            <!-- Involved Parties -->
+                            <div class="blotter-section border-bottom pb-3 mb-3">
+                                <h6 class="fw-bold text-primary">INVOLVED PARTIES</h6>
+                                <p class="mb-1"><strong>Complainant:</strong> <span id="viewComplainant"></span></p>
+                                <p><strong>Witness(es):</strong> <span id="viewWitness"></span></p>
+                            </div>
+                            
+                            <!-- Narrative Report -->
+                            <div class="blotter-section">
+                                <h6 class="fw-bold text-primary">NARRATIVE REPORT</h6>
+                                <div class="narrative-box p-3 bg-light rounded">
+                                    <p id="viewNarrative" class="mb-0"></p>
+                                </div>
+                            </div>
+                            <div class="blotter-section">
+                                <h6 class="fw-bold text-primary">EVIDENCE PICTURE</h6>
+                                <div class="narrative-box p-3 bg-light rounded">
+                                    <a href="" target="_blank" id="evidence_href">
+                                        <img src="" id="evidence" class="img-fluid w-30 mx-auto d-block mw-100">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer with Signature Line -->
+                    <div class="modal-footer bg-light">
+                        <div class="w-100 text-center">
+                            <div class="signature-line mt-4 mb-2 mx-auto" style="width: 300px; border-top: 1px solid #000;"></div>
+                            <h6 class="fw-bold mb-0">HON. PETER GUEVARRA</h6>
+                            <small class="text-muted">Punong Barangay</small>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="printBlotter()">
+                            <i class="fas fa-print me-2"></i>Print Blotter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Edit Entry</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editForm" enctype="multipart/form-data">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="editFileNo" class="form-label">File No:</label>
+                                    <input type="text" class="form-control" id="editFileNo" name="fileno" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="editDate" class="form-label">Date:</label>
+                                    <input type="date" class="form-control" id="editDate" name="date">
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="editBarangay" class="form-label">Barangay:</label>
+                                    <input type="text" class="form-control" id="editBarangay" name="barangay" placeholder="Barangay">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="editPurok" class="form-label">Purok:</label>
+                                    <input type="text" class="form-control" id="editPurok" name="purok" placeholder="Purok">
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="editIncident" class="form-label">Incident:</label>
+                                    <input type="text" class="form-control" id="editIncident" name="incident" placeholder="Incident">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="editPlaceOfIncident" class="form-label">Place of Incident:</label>
+                                    <input type="text" class="form-control" id="editPlaceOfIncident" name="placeofincident" placeholder="Place of Incident">
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="editTime" class="form-label">Time:</label>
+                                    <input type="time" class="form-control" id="editTime" name="time">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="editComplainant" class="form-label">Complainant:</label>
+                                    <input type="text" class="form-control" id="editComplainant" name="complainant" placeholder="Complainant">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="editWitness" class="form-label">Witness:</label>
+                                <input type="text" class="form-control" id="editWitness" name="witness" placeholder="Witness">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="editNarrative" class="form-label">Narrative:</label>
+                                <textarea class="form-control" id="editNarrative" name="narrative" rows="4" placeholder="Narrative"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="file_id">Upload Evidence</label>
+                                <input type="file" class="form-control" name="file" id="file_id" accept="image/*">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="saveChanges()">Update Entry</button>
                     </div>
                 </div>
             </div>
@@ -218,179 +377,155 @@ include 'user_navbar.php';
             }
 
             // Function to add a new entry to the table
-            function addNewEntry() {
-                // Retrieve values from the form
-                var fileNo = document.getElementById("fileNo").value;
-                var barangay = document.getElementById("barangay").value;
-                var purok = document.getElementById("purok").value;
-                var incident = document.getElementById("incident").value;
-                var placeOfIncident = document.getElementById("placeOfIncident").value;
-                var date = document.getElementById("date").value;
-                var time = document.getElementById("time").value;
-                var complainant = document.getElementById("complainant").value;
-                var witness = document.getElementById("witness").value;
-                var narrative = document.getElementById("narrative").value;
-
-                // Construct a data object to send to the server
-                var formData = new FormData();
-                formData.append('fileNo', fileNo);
-                formData.append('barangay', barangay);
-                formData.append('purok', purok);
-                formData.append('incident', incident);
-                formData.append('placeOfIncident', placeOfIncident);
-                formData.append('date', date);
-                formData.append('time', time);
-                formData.append('complainant', complainant);
-                formData.append('witness', witness);
-                formData.append('narrative', narrative);
-
-                // Make an AJAX request to insert the data into the database
-                fetch('insert_into_database.php', {
+            async function addNewEntry() {
+                try {
+                    // Create FormData and automatically append all form fields
+                    const form = document.getElementById('addNewForm');
+                    const formData = new FormData(form);
+                    
+                    // Add any additional fields not in the form
+                    formData.append('fileNo', document.getElementById('fileNo').value);
+                    
+                    // Send data to server
+                    const response = await fetch('save_blotter.php', {
                         method: 'POST',
                         body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        // Handle the response from the server
-                        console.log(data);
-
-                        if (data.success) {
-                            // Reload the page to reflect the changes
-                            location.reload();
-                        } else {
-                            // If insertion failed, display an error message
-                            alert('Failed to insert data into the database');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        // Display an error message if the request fails
-                        alert('Failed to connect to the server');
                     });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Success - show message and reset form
+                        alert('Entry added successfully!');
+                        location.reload();
+                    } else {
+                        throw new Error(result.message || 'Failed to insert data');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert(`Error: ${error.message}`);
+                }
             }
 
             // Function to open the view popup and populate it with data
-            function openViewPopup(fileNo, barangay, purok, incident, placeOfIncident, date, time, complainant, witness, narrative) {
-                // Debugging: Log the values of the variables passed to this function
-                console.log('File No:', fileNo);
-                console.log('Barangay:', barangay);
-                console.log('Purok:', purok);
-                console.log('Incident:', incident);
-                console.log('Place of Incident:', placeOfIncident);
-                console.log('Date:', date);
-                console.log('Time:', time);
-                console.log('Complainant:', complainant);
-                console.log('Witness:', witness);
-                console.log('Narrative:', narrative);
+            function openViewModal(data) {
+                const modal = new bootstrap.Modal(document.getElementById('viewModal'));
 
-                var modal = document.getElementById("viewModal");
-                modal.style.display = "block";
+                // Populate data
+                document.getElementById('viewFileNo').textContent = data.File_No;
+                document.getElementById('viewDate').textContent = data.Date;
+                document.getElementById('viewTime').textContent = data.Time;
+                document.getElementById('viewIncident').textContent = data.Incident;
+                document.getElementById('viewPlaceOfIncident').textContent = data.Place_of_Incident;
+                document.getElementById('viewBarangay').textContent = data.Barangay;
+                document.getElementById('viewPurok').textContent = data.Purok;
+                document.getElementById('viewComplainant').textContent = data.Complainant;
+                document.getElementById('viewWitness').textContent = data.Witness;
+                document.getElementById('viewNarrative').textContent = data.Narrative;
 
-                // Populate the view popup with data
-                var viewEntryDetails = document.getElementById("viewEntryDetails");
-                viewEntryDetails.innerHTML = `
-                    <p><strong>File No:</strong> ${fileNo}</p>
-                    <p><strong>Barangay:</strong> ${barangay}</p>
-                    <p><strong>Purok:</strong> ${purok}</p>
-                    <p><strong>Incident:</strong> ${incident}</p>
-                    <p><strong>Place of Incident:</strong> ${placeOfIncident}</p>
-                    <p><strong>Date:</strong> ${date}</p>
-                    <p><strong>Time:</strong> ${time}</p>
-                    <p><strong>Complainant:</strong> ${complainant}</p>
-                    <p><strong>Witness:</strong> ${witness}</p>
-                    <p><strong>Narrative:</strong> ${narrative}</p>
-                `;
+                
+                document.getElementById('evidence').src = '../uploads/evidences/'+data.file;
+                document.getElementById('evidence_href').href = '../uploads/evidences/'+data.file;
+                
+                modal.show();
             }
 
-            // Function to close the view popup
-            function closeViewPopup() {
-                var modal = document.getElementById("viewModal");
-                modal.style.display = "none";
+            function printBlotter() {
+                const printContent = document.querySelector('#printThis').cloneNode(true);
+                const printWindow = window.open('', '_blank');
+                
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Blotter Report Print</title>
+                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+                        <style>
+                            body { padding: 20px; }
+                            .blotter-section { margin-bottom: 15px; }
+                            .narrative-box { min-height: 150px; }
+                            @media print {
+                                .no-print { display: none !important; }
+                                body { font-size: 12pt; }
+                                button { display: none !important; }
+                                .img-fluid { width: 100px !important; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${printContent.innerHTML}
+                        <script>
+                            window.onload = function() {
+                                setTimeout(function() {
+                                    window.print();
+                                    
+                                    // Close window after printing (works in most browsers)
+                                    window.onafterprint = function() {
+                                        window.close();
+                                    };
+                                    
+                                    // Fallback in case onafterprint doesn't work
+                                    setTimeout(function() {
+                                        window.close();
+                                    }, 1000);
+                                }, 200);
+                            };
+                            
+                            // Close if user cancels print
+                            window.onbeforeunload = function() {
+                                window.close();
+                            };
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
             }
 
             // Function to open the edit popup and populate it with data
-            function openEditPopup(fileNo, barangay, purok, incident, placeOfIncident, date, time, complainant, witness, narrative) {
-                var modal = document.getElementById("editModal");
-                modal.style.display = "block";
+            function openEditModal(fileNo, barangay, purok, incident, placeOfIncident, date, time, complainant, witness, narrative) {
+                const modal = new bootstrap.Modal(document.getElementById('editModal'));
+                
+                // Populate the form fields
+                document.getElementById('editFileNo').value = fileNo;
+                document.getElementById('editBarangay').value = barangay;
+                document.getElementById('editPurok').value = purok;
+                document.getElementById('editIncident').value = incident;
+                document.getElementById('editPlaceOfIncident').value = placeOfIncident;
+                document.getElementById('editDate').value = date;
+                document.getElementById('editTime').value = time;
+                document.getElementById('editComplainant').value = complainant;
+                document.getElementById('editWitness').value = witness;
+                document.getElementById('editNarrative').value = narrative;
 
-                // Populate the edit popup with data
-                document.getElementById("editFileNo").value = fileNo;
-                document.getElementById("editBarangay").value = barangay;
-                document.getElementById("editPurok").value = purok;
-                document.getElementById("editIncident").value = incident;
-                document.getElementById("editPlaceOfIncident").value = placeOfIncident;
-                document.getElementById("editDate").value = date;
-                document.getElementById("editTime").value = time;
-                document.getElementById("editComplainant").value = complainant;
-                document.getElementById("editWitness").value = witness;
-                document.getElementById("editNarrative").value = narrative;
+                modal.show();
             }
 
-            // Function to close the edit popup
-            function closeEditPopup() {
-                var modal = document.getElementById("editModal");
-                modal.style.display = "none";
-            }
 
             // Function to update the entry
-            function updateEntry() {
-                // Retrieve values from the form
-                var fileNo = document.getElementById("editFileNo").value;
-                var barangay = document.getElementById("editBarangay").value;
-                var purok = document.getElementById("editPurok").value;
-                var incident = document.getElementById("editIncident").value;
-                var placeOfIncident = document.getElementById("editPlaceOfIncident").value;
-                var date = document.getElementById("editDate").value;
-                var time = document.getElementById("editTime").value;
-                var complainant = document.getElementById("editComplainant").value;
-                var witness = document.getElementById("editWitness").value;
-                var narrative = document.getElementById("editNarrative").value;
+            async function saveChanges() {
+                const form = document.getElementById('editForm');
+                const formData = new FormData(form);
 
-                // Construct a data object to send to the server
-                var formData = new FormData();
-                formData.append('fileNo', fileNo);
-                formData.append('barangay', barangay);
-                formData.append('purok', purok);
-                formData.append('incident', incident);
-                formData.append('placeOfIncident', placeOfIncident);
-                formData.append('date', date);
-                formData.append('time', time);
-                formData.append('complainant', complainant);
-                formData.append('witness', witness);
-                formData.append('narrative', narrative);
-
-                // Make an AJAX request to update the data in the database
-                fetch('update_database.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        // Handle the response from the server
-                        console.log(data);
-
-                        if (data.success) {
-                            // Reload the page to reflect the changes
-                            location.reload();
-                        } else {
-                            // If update failed, display an error message
-                            alert('Failed to update data in the database');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-
-                        // Display an error message if the request fails
-                        alert('Failed to connect to the server');
+                try {
+                    const response = await fetch('update_blotter.php', {
+                    method: 'POST',
+                    body: formData
                     });
-            }
-
-            // Function to print the view modal content
-            function printModal(modalId) {
-                window.print();
-            }
-            ini_set('display_errors', 1);
-            error_reporting(E_ALL);
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert(result.message);
+                    location.reload(); // Refresh to show changes
+                    } else {
+                    alert(result.message || 'Update failed');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to connect to server');
+                }
+                }
         </script>
     </div>
 </body>

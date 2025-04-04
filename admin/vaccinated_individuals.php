@@ -1,6 +1,4 @@
 <?php
-include '../connection/connect.php'; // Include your database connection file
-
 $vaccinationQuery = "SELECT * FROM resident_list";
 $vaccinationResult = mysqli_query($conn, $vaccinationQuery);
 
@@ -20,7 +18,7 @@ if (mysqli_num_rows($vaccinationResult) > 0) {
         echo "<td>" . $row['vaccination_date'] . "</td>"; // Display the vaccination_date column
         // Combine view and edit buttons into the action column
         echo "<td class='button-group'>";
-        echo "<button  class='btn-primary action-button' onclick='viewVaccinationDetails(this)'><i class='fas fa-eye'></i> View</button>";
+        echo "<button  class='btn btn-primary action-button' onclick='viewVaccinationDetails(this)'><i class='fas fa-eye'></i></button>";
         echo "</td>";
         echo "</tr>";
     }

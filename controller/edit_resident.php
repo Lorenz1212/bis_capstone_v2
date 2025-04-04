@@ -23,6 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $voter_status = $_POST['voter_status'];
     $education_attainment = $_POST['education_attainment'];
     $vaccination_status = $_POST['vaccination_status'];
+    $vaccination_type = $_POST['vaccination_type'];
+    $vaccine = $_POST['vaccine'];
     $occupation = $_POST['occupation'];
     $disability = $_POST['disability'];
 
@@ -98,14 +100,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    
     // SQL query to update resident information using prepared statement
     $sql = "UPDATE resident_list 
-            SET national_id=?, lastName=?, firstName=?, middleName=?, Suffix=?, address=?, house_no=?, birthdate=?, age=?, gender=?, civil_status=?, birthplace=?, religion=?, email=?, contact_number=?, voter_status=?, education_attainment=?, vaccination_status=?, occupation=?, disability=?, file = ?
+            SET national_id=?, lastName=?, firstName=?, middleName=?, Suffix=?, address=?, house_no=?, birthdate=?, age=?, gender=?, civil_status=?, birthplace=?, religion=?, email=?, contact_number=?, voter_status=?, education_attainment=?, vaccination_status=?, occupation=?, disability=?, file = ?, vaccination_type=?,vaccine=?
             WHERE accountID=?";
 
     // Prepare the SQL statement
     $stmt = $conn->prepare($sql);
 
     // Bind parameters to the prepared statement
-    $stmt->bind_param("sssssssssssssssssssssi", $national_id, $last_name, $first_name, $middle_name, $Suffix, $address, $house_no, $birthdate, $age, $gender, $civil_status, $birthplace, $religion, $email, $contact_number, $voter_status, $education_attainment, $vaccination_status, $occupation, $disability, $newFileName, $accountID);
+    $stmt->bind_param("sssssssssssssssssssssssi", $national_id, $last_name, $first_name, $middle_name, $Suffix, $address, $house_no, $birthdate, $age, $gender, $civil_status, $birthplace, $religion, $email, $contact_number, $voter_status, $education_attainment, $vaccination_status, $occupation, $disability, $newFileName, $vaccination_type, $vaccine,$accountID);
 
     if ($stmt->execute()) {
         echo json_encode(["status" => "success", "message" => "Saved Changes"]);

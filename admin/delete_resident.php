@@ -13,7 +13,7 @@ if (isset($_GET['id'])) {
     // Execute the query
     if (mysqli_query($conn, $sql)) {
         // Redirect the user back to the resident list page after successful deletion
-        header("Location: home.php");
+        header("Location: index.php");
         exit(); // Stop further execution
     } else {
         // Display an error message if the deletion fails

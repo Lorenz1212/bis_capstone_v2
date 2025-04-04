@@ -1,20 +1,14 @@
 
 <div class="container">
     <?php
-    // Include the database connection file
-    include '../connection/connect.php';
-
-    // Query to select all rows from the resident_list table
     $sql = "SELECT * FROM resident_list where registration_status ='APPROVED'";
-
-    // Execute the query
     $result = $conn->query($sql);
     ?>
     <?php
     // Check if there are any rows returned
     if ($result->num_rows > 0) {
         // Output table header
-        echo "<table border='1' id='residentTableList'>
+        echo "<table class='table table-bordered' border='1' id='residentTableList'>
                 <tr>
                     <th class='left'>Account ID</th>
                     <th class='left'>Valid ID #</th>
@@ -61,8 +55,5 @@
     } else {
         echo "0 results";
     }
-
-    // Close the database connection
-    $conn->close();
     ?>
 </div>

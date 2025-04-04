@@ -1,73 +1,82 @@
    // Function to open the popup and display resident information
-   function viewResidentInfo(row) {
-
-    $action ="";
-    if(row.registration_status == 'REQUEST'){
-        $action += `<div class="button-group">
-                        <button type="button" class="btn-success approval" data-status="APPROVED" data-id="${row.accountID}">Approve</button>
-                        <button type="button" class="btn-danger approval" data-status="DISAPPROVED" data-id="${row.accountID}">Reject</button>
-                    </div>
-                    `;
+function viewResidentInfo(row) {
+    let actionButtons = "";
+    if (row.registration_status === 'REQUEST') {
+        actionButtons += `
+            <div class="d-flex justify-content-center mt-3">
+                <button type="button" class="btn btn-success mx-2 approval" data-status="APPROVED" data-id="${row.accountID}">Approve</button>
+                <button type="button" class="btn btn-danger mx-2 approval" data-status="DISAPPROVED" data-id="${row.accountID}">Reject</button>
+            </div>
+        `;
     }
-    let filePath = "./../uploads/" + row.file; // Adjust the path as needed
-    var residentInfoHtml = `
-    <div class="res-infos">
-    <div class="profile-image" style="margin-right:100px">
-        <img src="../image/icon.jpg" alt="Profile Image">
-    </div>
-    <div class="info1">
-        <p><strong>Account ID:</strong> ${row.accountID}</p>
-        <p><strong>National ID:</strong> ${row.national_id}</p>
-        <p><strong>Last Name:</strong> ${row.lastName}</p>
-        <p><strong>First Name:</strong> ${row.firstName}</p>
-        <p><strong>Middle Name:</strong> ${row.middleName}</p>
-        <p><strong>Suffix:</strong> ${row.Suffix??''}</p>
-        <p><strong>Address:</strong> ${row.address}</p>
-        <p><strong>House No:</strong> ${row.house_no}</p>
-        <p><strong>Birthdate:</strong> ${row.birthdate}</p>
-        <p><strong>Age:</strong> ${row.age}</p>
-        <p><strong>Gender:</strong> ${row.gender}</p>
-        <p><strong>Civil Status:</strong> ${row.civil_status}</p>
-        </div>
-        <div class="info2">
-        <p><strong>Birthplace:</strong> ${row.birthplace}</p>
-        <p><strong>Religion:</strong> ${row.religion}</p>
-        <p><strong>Email:</strong> ${row.email}</p>
-        <p><strong>Contact Number:</strong> ${row.contact_number}</p>
-        <p><strong>Voter Status:</strong> ${row.voter_status}</p>
-        <p><strong>Educational Attainment:</strong> ${row.education_attainment}</p>
-        <p><strong>Occupation:</strong> ${row.occupation}</p>
-        <p><strong>Disability:</strong> ${row.disability}</p>
-        <p><strong>Vaccinated:</strong> ${row.vaccination_status}</p>
-        <p><a href="${filePath}" target="_blank">Click to view ID</a><p>
-        <br>
-        <p>
-            ${$action}
-        </p>
-        </div>
-    </div>
-    `;
-    
-    document.getElementById("residentInfo").innerHTML = residentInfoHtml;
-    document.getElementById("viewResidentPopup").style.display = "block";
 
+    let filePath = `./../uploads/${row.file}`;
+
+    let residentInfoHtml = `
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <img src="../image/person.png" alt="Profile Image" class="img-fluid rounded-circle mb-3" style="max-width: 150px;">
+            </div>
+            <div class="col-md-4">
+                <p><strong>Account ID:</strong> ${row.accountID}</p>
+                <p><strong>National ID:</strong> ${row.national_id}</p>
+                <p><strong>Last Name:</strong> ${row.lastName}</p>
+                <p><strong>First Name:</strong> ${row.firstName}</p>
+                <p><strong>Middle Name:</strong> ${row.middleName}</p>
+                <p><strong>Suffix:</strong> ${row.Suffix ?? ''}</p>
+            </div>
+            <div class="col-md-4">
+                <p><strong>Address:</strong> ${row.address}</p>
+                <p><strong>House No:</strong> ${row.house_no}</p>
+                <p><strong>Birthdate:</strong> ${row.birthdate}</p>
+                <p><strong>Age:</strong> ${row.age}</p>
+                <p><strong>Gender:</strong> ${row.gender}</p>
+                <p><strong>Civil Status:</strong> ${row.civil_status}</p>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Birthplace:</strong> ${row.birthplace}</p>
+                <p><strong>Religion:</strong> ${row.religion}</p>
+                <p><strong>Email:</strong> ${row.email}</p>
+                <p><strong>Contact Number:</strong> ${row.contact_number}</p>
+                <p><strong>Voter Status:</strong> ${row.voter_status}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Educational Attainment:</strong> ${row.education_attainment}</p>
+                <p><strong>Occupation:</strong> ${row.occupation}</p>
+                <p><strong>Disability:</strong> ${row.disability}</p>
+                <p><strong>Vaccinated:</strong> ${row.vaccination_status}</p>
+                <p><strong>ID:</strong> <a href="${filePath}" target="_blank">Click to View</a></p>
+            </div>
+        </div>
+
+        ${actionButtons}
+    `;
+
+    document.getElementById("residentInfo").innerHTML = residentInfoHtml;
+    
+    // Show modal
+    let residentModal = new bootstrap.Modal(document.getElementById("residentInfoModal"));
+    residentModal.show();
+
+    // Add event listeners for approval buttons
     document.querySelectorAll(".approval").forEach(button => {
         button.addEventListener("click", function (e) {
             e.preventDefault();
-            e.stopImmediatePropagation();
-        
-            // Show confirmation alert before proceeding
-            let confirmAction = confirm("Are you sure you want to proceed with this approval?");
-            if (!confirmAction) return; // Stop execution if the user cancels
-    
-            // Retrieve data attributes
+            
+            if (!confirm("Are you sure you want to proceed?")) return;
+
             let status = this.getAttribute("data-status");
             let account_id = this.getAttribute("data-id");
-    
+
             let formData = new FormData();
             formData.append("registration_status", status);
             formData.append("accountID", account_id);
-    
+
             fetch("../controller/resident_approval.php", {
                 method: "POST",
                 body: formData
@@ -76,7 +85,7 @@
             .then(data => {
                 alert(data.message);
                 if (data.status === "success") {
-                    location.reload(); // Reload only on success
+                    location.reload();
                 }
             })
             .catch(error => {
@@ -87,32 +96,27 @@
     });
 }
 
-// Function to close the popup
-function closeViewPopup() {
-    document.getElementById("viewResidentPopup").style.display = "none";
-}
-
-function printVaccinationDetails(){
-    window.print();
-}
   // Function to open the view modal and display vaccination details
 function viewVaccinationDetails(button) {
-    var row = button.parentNode.parentNode; // Get the row that contains the clicked button
-    
-    // Retrieve data from the row
+    if (!button) return; // Ensure button is provided
 
-    var accountID = row.cells[0].textContent;
-    var nationalId = row.cells[1].textContent;
-    var lastName = row.cells[2].textContent;
-    var firstName = row.cells[3].textContent;
-    var age = row.cells[4].textContent;
-    var gender = row.cells[5].textContent;
-    var birthdate = row.cells[6].textContent;
-    var vaccinationStatus = row.cells[7].textContent;
-    var vaccine = row.cells[8].textContent;
-    var vaccinationType = row.cells[9].textContent;
-    var vaccinationDate = row.cells[10].textContent;
-    
+    var row = button.closest("tr"); // Get the closest table row
+    let modal = new bootstrap.Modal(document.getElementById("viewModal"));
+    modal.show();
+
+    // Retrieve data from the row and trim to avoid extra spaces
+    var accountID = row.cells[0].textContent.trim();
+    var nationalId = row.cells[1].textContent.trim();
+    var lastName = row.cells[2].textContent.trim();
+    var firstName = row.cells[3].textContent.trim();
+    var age = row.cells[4].textContent.trim();
+    var gender = row.cells[5].textContent.trim();
+    var birthdate = row.cells[6].textContent.trim();
+    var vaccinationStatus = row.cells[7].textContent.trim();
+    var vaccine = row.cells[8].textContent.trim();
+    var vaccinationType = row.cells[9].textContent.trim();
+    var vaccinationDate = row.cells[10].textContent.trim();
+
     // Set the values in the view modal
     document.getElementById('accountIDView').textContent = accountID;
     document.getElementById('nationalIdView').textContent = nationalId;
@@ -125,134 +129,43 @@ function viewVaccinationDetails(button) {
     document.getElementById('vaccinationDateView').textContent = vaccinationDate;
     document.getElementById('vaccineView').textContent = vaccine;
     document.getElementById('vaccinationTypeView').textContent = vaccinationType;
-
-
-
-    
-    // Display the view modal
-    document.getElementById('viewModal').style.display = 'block';
 }
 
-// Function to close the view modal
-function closeViewModal() {
-    document.getElementById('viewModal').style.display = 'none';
-}
-// Function to open popup form
-function openPopupForm() {
-    document.getElementById("popupForm").style.display = "block";
-}
+function printVaccinationDetails() {
+    let modalContent = document.querySelector("#viewModal .modal-body").innerHTML; // Get modal content only
 
-// Function to close popup form
-function closePopupForm(element) {
-    document.getElementById(element).style.display = "none";
-}
+    let newWindow = window.open("", "_blank"); // Open a new blank tab
+    newWindow.document.write(`
+        <html>
+        <head>
+            <title>Print Vaccination Record</title>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+            <style>
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                .table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                .table th, .table td { border: 1px solid black; padding: 8px; text-align: center; }
+                .table th { background-color: #f8f9fa; }
+            </style>
+        </head>
+        <body>
+            <div class="text-center">
+                <img src="../image/logo.png" alt="Logo" width="100">
+                <h4 class="fw-bold">Vaccination Record</h4>
+            </div>
+            ${modalContent} <!-- Insert modal content -->
+            <script>
+                window.onload = function() {
+                    window.print();
+                    window.close();
+                };
+            </script>
+        </body>
+        </html>
+    `);
 
-// Function to open a specific tab
-function openTab(evt, tabName) {
-    var i, tabcontent, tablinks;
-
-    // Hide all tab content
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-    }
-
-    // Remove the 'active' class from all tab links
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-
-    // Show the specific tab content and set the button as active
-    document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.className += " active";
-}
-// Function to set the active tab ID in local storage
-function setActiveTab(tabId) {
-    localStorage.setItem('activeTab', tabId);
+    newWindow.document.close(); // Close writing stream
 }
 
-// Function to get the active tab ID from local storage
-function getActiveTab() {
-    return localStorage.getItem('activeTab');
-}
-
-// Function to open the default active tab when the page loads
-window.onload = function() {
-    var activeTabId = getActiveTab();
-    if (activeTabId) {
-        openTab(null, activeTabId);
-    } else {
-        document.getElementById('defaultOpen').click();
-    }
-};
-
-// Function to open a specific tab
-function openTab(evt, tabName) {
-    var i, tabcontent, tablinks;
-
-    // Hide all tab content
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-    }
-
-    // Remove the 'active' class from all tab links
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-
-    // Show the specific tab content and set the button as active
-    document.getElementById(tabName).style.display = "block";
-    if (evt) {
-        evt.currentTarget.className += " active";
-    } else {
-        document.getElementById(tabName).className += " active";
-    }
-    
-
-    // Function to set the active tab ID in local storage
-    function setActiveTab(tabId) {
-        localStorage.setItem('activeTab', tabId);
-    }
-
-    // Function to get the active tab ID from local storage
-    function getActiveTab() {
-        return localStorage.getItem('activeTab');
-    }
-
-    // Function to zoom in the "Add New" button on hover
-    document.querySelector('.left-button').addEventListener('mouseover', function() {
-        this.style.transform = 'scale(1.1)';
-    });
-
-    // Function to zoom out the "Add New" button when not hovered
-    document.querySelector('.left-button').addEventListener('mouseout', function() {
-        this.style.transform = 'scale(1)';
-    });
-
-    // Function to open the default active tab when the page loads
-    window.onload = function() {
-        var activeTabId = getActiveTab();
-        if (activeTabId) {
-            openTab(null, activeTabId);
-        } else {
-            document.getElementById('defaultOpen').click();
-        }
-    };
-}
-    // Check if the URL contains a warning parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const warning = urlParams.get('warning');
-    // Check if the warning has been shown in this session
-    const warningShown = sessionStorage.getItem('warningShown');
-    // If there is a warning parameter and it hasn't been shown in this session, display an alert with the message
-    if (warning && !warningShown) {
-        alert(warning);
-        // Mark the warning as shown in this session
-        sessionStorage.setItem('warningShown', 'true');
-    }
 // Function to perform live search for residents
 function searchResidents(element,searchElement) {
     var input, filter, table, tr, td, i, txtValue;
@@ -332,15 +245,15 @@ function filterTable() {
     });
 }
 
-  // Function to open the popup form for editing resident information
- // Function to open the popup form for editing resident information
-function openEditPopupFormEdit(row) {
-    // Show the popup form
-    document.getElementById("editPopupFormEdit").style.display = "block";
+function openEditPopupFormEdit(row) {  
+    // Show the Bootstrap modal
+    let modal = new bootstrap.Modal(document.getElementById("editModal"));
+    modal.show();
 
     // Use a more specific query to ensure the elements are found correctly
     const form = document.querySelector("#edit_resident");
     if (form) {
+        console.log(row);
         form.querySelector("#editAccountID").value = row.accountID;
         form.querySelector("#national_id").value = row.national_id;
         form.querySelector("#lastName").value = row.lastName;
@@ -348,6 +261,8 @@ function openEditPopupFormEdit(row) {
         form.querySelector("#middleName").value = row.middleName;
         form.querySelector("#Suffix").value = row.Suffix;
         form.querySelector("#address").value = row.address;
+        form.querySelector("#civil_status").value = row.civil_status;
+        form.querySelector("#gender").value = row.gender;
         form.querySelector("#house_no").value = row.house_no;
         form.querySelector("#birthdate").value = row.birthdate;
         form.querySelector("#age").value = row.age;
@@ -356,6 +271,14 @@ function openEditPopupFormEdit(row) {
         form.querySelector("#contact_number").value = row.contact_number;
         form.querySelector("#occupation").value = row.occupation;
         form.querySelector("#vaccination_date").value = row.vaccination_date;
+        form.querySelector("#religion").value = row.religion;
+
+        form.querySelector("#education_attainment").value = row.education_attainment;
+        form.querySelector("#voter_status").value = row.voter_status;
+        form.querySelector("#disability").value = row.disability;
+        form.querySelector("#vaccination_status").value = row.vaccination_status;
+        form.querySelector("#vaccination_type").value = row.vaccination_type;
+        form.querySelector("#vaccine").value = row.vaccine;
 
         if (row.file !== null && row.file !== "") {
             let filePath = "./../uploads/" + row.file; // Adjust the path as needed
@@ -363,61 +286,9 @@ function openEditPopupFormEdit(row) {
             form.querySelector('#id_link').setAttribute('href', filePath);
         } else {
             form.querySelector('#file_id_show').style.display = 'none';
-            form.querySelector('#file_id').setAttribute('required');
+            form.querySelector('#file_id').setAttribute('required', true);
         }
-        
-
-        const genderSelect = form.querySelector("#gender");
-        if ([...genderSelect.options].some(option => option.value === row.gender)) {
-            genderSelect.value = row.gender;
-        }
-
-        const civil_status = form.querySelector("#civil_status");
-        if ([...civil_status.options].some(option => option.value === row.civil_status)) {
-            civil_status.value = row.civil_status;
-        }
-
-        const religionSelect = form.querySelector("#religion");
-        if ([...religionSelect.options].some(option => option.value === row.religion)) {
-            religionSelect.value = row.religion;
-        }
-
-        const educationattainmentSelect = form.querySelector("#education_attainment");
-        if ([...educationattainmentSelect.options].some(option => option.value === row.education_attainment)) {
-            educationattainmentSelect.value = row.education_attainment;
-        }
-
-        const voterStatus = form.querySelector("#voter_status");
-        if ([...voterStatus.options].some(option => option.value === row.voter_status)) {
-            voterStatus.value = row.voter_status;
-        }
-
-        const disabilitySelect = form.querySelector("#disability");
-        if ([...disabilitySelect.options].some(option => option.value === row.disability)) {
-            disabilitySelect.value = row.disability;
-        }
-
-        const vaccinationstatusSelect = form.querySelector("#vaccination_status");
-        if ([...vaccinationstatusSelect.options].some(option => option.value === row.vaccination_status)) {
-            vaccinationstatusSelect.value = row.vaccination_status;
-        }
-
-        const vaccinationtpeSelect = form.querySelector("#vaccination_type");
-        if ([...vaccinationtpeSelect.options].some(option => option.value === row.vaccination_type)) {
-            vaccinationtpeSelect.value = row.vaccination_type;
-        }
-
-        const vaccineSelect = form.querySelector("#vaccine");
-        if ([...vaccineSelect.options].some(option => option.value === row.vaccine)) {
-            vaccineSelect.value = row.vaccine;
-        }
-      
     } else {
-        console.error("Edit popup form not found!");
+        console.error("Edit modal form not found!");
     }
-}
-
-// Function to close the popup form for editing resident information
-function closeEditPopupForm() {
-    document.getElementById("editPopupFormEdit").style.display = "none";
 }

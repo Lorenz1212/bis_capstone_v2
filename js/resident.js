@@ -55,6 +55,7 @@ function updateAgeEdit() {
         document.querySelector('.age').value = age;
     }
 }
+
 window.onload = updateAgeEdit;
 window.onload = setDefaultDate;
 

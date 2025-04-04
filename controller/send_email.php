@@ -8,11 +8,12 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 function company() {
-    return "Barangay Marinig";
+    return "Barangay Mamatid";
 }
 
 function email_template($type, $content) {
     return match ($type) {
+        'announcement' => announcement($content),
         'new_account'=> new_account($content),
         'forgot_password' => forgot_password($content),
         'account_rejected'=> account_rejected($content),
@@ -44,6 +45,29 @@ function send_mail($type, $email, $name, $subject, $content) {
     } catch (Exception $e) {
         return $e;
     }
+}
+
+function announcement($content) {
+    $company = company();
+    return <<<HTML
+    <!doctype html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{$company}</title>
+    </head>
+    <body style="background-color:#f2f3f5;padding:20px">
+        <div style="max-width:1000px;width:100%;margin:0 auto; background:#fff; font:14px sans-serif; color:#686f7a; border-top:4px solid #36ae6a; padding:30px;">
+            <div style="text-align:center; border-bottom:1px solid #f2f3f5; padding-bottom:10px;">
+                <h2>{$content['subject']}</h2>
+                <p>{$content['message']}</p>
+            </div>
+            <p style="font-size:11px; color:#686f7a;">© 2025  $company</p>
+        </div>
+    </body>
+    </html>
+    HTML;
 }
 
 function new_account($content) {

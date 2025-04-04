@@ -8,21 +8,23 @@ if (isset($_POST['login'])) {
     $password = $_POST['password'];
 
     // Check against admin table
-    $admin_query = "SELECT accountID FROM admin WHERE username=? AND password=?";
+    $admin_query = "SELECT accountID,password FROM admin WHERE username=?";
     $stmt = $conn->prepare($admin_query);
-    $stmt->bind_param('ss', $username, $password);
+    $stmt->bind_param('s', $username);
     $stmt->execute();
     $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
-        $stmt->bind_result($accountID);
+        $stmt->bind_result($accountID,$cpassword);
         $stmt->fetch();
-        $_SESSION['accountID'] = $accountID;
-        echo '<script>';
-        echo 'window.alert("The account ID is: ' . $_SESSION['accountID'] . '");';
-        echo '</script>';
-        header('Location: admin/index.php'); // Redirect to admin dashboard
-        exit();
+        if (password_verify($password, $cpassword)) {
+            $_SESSION['accountID'] = $accountID;
+            echo '<script>';
+            echo 'window.alert("The account ID is: ' . $_SESSION['accountID'] . '");';
+            echo '</script>';
+            header('Location: admin/index.php'); // Redirect to admin dashboard
+            exit();     
+        }
     }
 
     // Check against resident list table
