@@ -17,7 +17,7 @@ try {
             if ($announcement['purok'] == 'ALL') {
                 $query = "SELECT * FROM resident_list WHERE email IS NOT NULL";
             } else {
-                $query = "SELECT * FROM resident_list WHERE purok='" . $announcement['purok'] . "' AND email IS NOT NULL";
+                $query = "SELECT * FROM resident_list WHERE address='" . $announcement['purok'] . "' AND email IS NOT NULL";
             }
             $resident = $conn->query($query);
 
