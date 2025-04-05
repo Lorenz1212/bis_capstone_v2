@@ -137,7 +137,7 @@ while($row = $result1->fetch_assoc()){
 
                         <label for="voter_status">Voter Status:</label>
                         <select id="voter_status" name="voter_status" required>
-                            <option value="" disabled selected>--Are you a voter in marinig?--</option>
+                            <option value="" disabled selected>--Are you a voter in mamatid?--</option>
                             <option value="yes">Yes</option>
                             <option value="No">No</option>
                         </select>
